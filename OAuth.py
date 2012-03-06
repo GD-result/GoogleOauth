@@ -7,8 +7,8 @@ Created on 04.03.2012
 
 '''
 import webbrowser
-import gdata.apps.groups.service
-from urlparse import urlparse
+import gdata.apps.service
+import pickle
 
 POSSIBLE_SCOPES = ['https://apps-apis.google.com/a/feeds/groups/', # Groups Provisioning API
                      'https://apps-apis.google.com/a/feeds/alias/', # Nickname Provisioning API
@@ -69,6 +69,7 @@ class OAuth:
         #Getting first request token
         self.requestToken = self.apps.FetchOAuthRequestToken(scopes=scopes,
                                                              extra_parameters=self.fetchParams)
+        #Application's name
         urlParams = {'hd': self.domain}
         #Generating URL to grant access
         url = self.apps.GenerateOAuthAuthorizationURL(request_token=self.requestToken,
@@ -82,15 +83,19 @@ class OAuth:
         This method must be called for getting the final access code
         '''
         #Getting URL to grant access
-        URL = self.getOAuthAuthorizationURL(self.scopes, printAuthorizationUrl=True)
+        url = self.getOAuthAuthorizationURL(self.scopes, printAuthorizationUrl=True)
         print "Now script will open a web page in order for you to grant <%s> access" % self.fetchParams["xoauth_displayname"]
         #Opening URL
-        webbrowser.open(URL)
-        raw_input("Once you have granted access, press the Enter key")   
+        webbrowser.open(url)
+        raw_input("Once you have granted access, press the Enter key")  
+         
         #Getting the final access token
         final_token = self.apps.UpgradeToOAuthAccessToken(self.requestToken)
-        final_token = urlparse(str(final_token))
-        params = dict([part.split('=') for part in final_token[2].split('&')])
-        return params["oauth_token"]
+        
+        #Saving in file
+        f = open("oauth.txt", 'wb')
+        f.write('%s\n' % (self.domain,))
+        pickle.dump(final_token, f)
+        f.close()
 
     
