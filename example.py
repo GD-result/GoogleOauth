@@ -1,3 +1,4 @@
+
 import gdata.apps
 
 #Example how to authorize you application service
@@ -11,7 +12,7 @@ print multidomainObj.RetrieveAllUsers()
 from OAuth import OAuth
 from OAuth import POSSIBLE_SCOPES
 OAuth(domain="gridcommons.com", 
-                         clientKey="client key", 
-                         clientSecret="client secret", 
+                         clientKey="your client key", 
+                         clientSecret="your client secret", 
                          scopes=POSSIBLE_SCOPES, 
                          appName="application name").getAccessToken()
